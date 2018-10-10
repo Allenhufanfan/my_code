@@ -1,6 +1,8 @@
 #include <stdio.h>  
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <queue>
 using namespace std;
 
 struct TreeNode {
@@ -12,12 +14,12 @@ struct TreeNode {
 	}
 };
 
-//äºŒå‰æ ‘å‰åºéå†
+//¶ş²æÊ÷Ç°Ğò±éÀú
 void preOrder(TreeNode *p)
 {
     if (p != nullptr)
     {
-        cout << p->value << endl;
+        cout << p->value << " ";
         preOrder(p->lchild);
         preOrder(p->rchild);
     }
@@ -25,6 +27,10 @@ void preOrder(TreeNode *p)
 
 class Solution {
 public:
+    /*
+      ÊäÈëÒ»¿Å¶ş²æÊ÷ºÍÒ»¸öÕûÊı£¬´òÓ¡³ö¶ş²æÊ÷ÖĞ½áµãÖµµÄºÍÎªÊäÈëÕûÊıµÄËùÓĞÂ·¾¶¡£
+      Â·¾¶¶¨ÒåÎª´ÓÊ÷µÄ¸ù½áµã¿ªÊ¼ÍùÏÂÒ»Ö±µ½Ò¶½áµãËù¾­¹ıµÄ½áµãĞÎ³ÉÒ»ÌõÂ·¾¶¡£
+    */
     vector<vector<int> > FindPath(TreeNode* root,int expectNumber){
         if(root == NULL){
             return result;
@@ -35,9 +41,9 @@ public:
             result.push_back(tmp);
         }
         
-        //éå†å·¦å­æ ‘
+        //±éÀú×ó×ÓÊ÷
         FindPath(root->lchild, expectNumber - root->value);
-        //éå†å³å­æ ‘
+        //±éÀúÓÒ×ÓÊ÷
         FindPath(root->rchild, expectNumber - root->value);
 
         
@@ -46,11 +52,140 @@ public:
             cout << *it<< " ";
         }
         cout << endl;
-             
-        tmp.pop_back();
-
-        
+        tmp.pop_back();   
         return result;
+    }
+
+    /*
+      °Ñ¶ş²æÊ÷´òÓ¡³É¶àĞĞ
+      ´ÓÉÏµ½ÏÂ°´²ã´òÓ¡¶ş²æÊ÷£¬Í¬Ò»²ã½áµã´Ó×óÖÁÓÒÊä³ö¡£Ã¿Ò»²ãÊä³öÒ»ĞĞ¡£
+    */
+    vector<vector<int> > PrintTreebyOrder(TreeNode* pRoot) 
+    {
+        //vector<vector<int> > result;
+        if(pRoot == NULL)
+        {
+            return result;
+        }
+        queue<TreeNode* > nodes[2];
+        nodes[0].push(pRoot);
+        while(!nodes[0].empty() || !nodes[1].empty())
+        {
+            vector<int> v[2];
+            while(!nodes[0].empty())
+            {
+                v[0].push_back(nodes[0].front()->value);
+                if(nodes[0].front()->lchild != NULL)
+                {
+                    nodes[1].push(nodes[0].front()->lchild);
+                }
+                if(nodes[0].front()->rchild != NULL)
+                {
+                    nodes[1].push(nodes[0].front()->rchild);
+                }
+                nodes[0].pop();
+            }
+            if(!v[0].empty())
+            {
+                result.push_back(v[0]);
+            }
+            while(!nodes[1].empty())
+            {
+                v[1].push_back(nodes[1].front()->value);
+                if(nodes[1].front()->lchild != NULL)
+                {
+                    nodes[0].push(nodes[1].front()->lchild);
+                }
+                if(nodes[1].front()->rchild != NULL)
+                {
+                    nodes[0].push(nodes[1].front()->rchild);
+                }
+                nodes[1].pop();
+            }
+            if(!v[1].empty())
+            {
+                result.push_back(v[1]);
+            }
+        }
+        return result;
+    }
+
+    vector<vector<int> > PrintTreebyZhi(TreeNode* pRoot) 
+    {
+        if(pRoot == NULL)
+        {
+            return result;
+        }
+        stack<TreeNode* > s[2];
+        s[0].push(pRoot);
+        while(!s[0].empty() || !s[1].empty())
+        {
+            vector<int> v[2];
+            // Å¼ÊıĞĞ
+            while(!s[0].empty())
+            {
+                v[0].push_back(s[0].top()->value);
+                if(s[0].top()->lchild != NULL)
+                {
+                    s[1].push(s[0].top()->lchild);
+                }
+                if(s[0].top()->rchild != NULL)
+                {
+                    s[1].push(s[0].top()->rchild);
+                }
+                s[0].pop();
+            }
+            if(!v[0].empty())
+            {
+                result.push_back(v[0]);
+            }
+            // ÆæÊıĞĞ
+            while(!s[1].empty())
+            {
+                v[1].push_back(s[1].top()->value);
+                if(s[1].top()->rchild != NULL)
+                {
+                    s[0].push(s[1].top()->rchild);
+                }
+                if(s[1].top()->lchild != NULL)
+                {
+                    s[0].push(s[1].top()->lchild);
+                }
+                s[1].pop();
+            }
+            if(!v[1].empty())
+            {
+                result.push_back(v[1]);
+            }
+        }
+        return result;
+    }
+
+    void printResult(){
+        //´òÓ¡ÏÔÊ¾Â·¾¶
+        int row = 0; //ĞĞÊı
+        int col=0;//»ñÈ¡ÁĞÊı
+        
+        for(row = 0; row < result.size() ; row++)
+        {
+            for(col = 0; col < result[row].size(); col++)
+            {
+                cout << result[row][col] << " ";
+            } 
+            cout << endl;   
+        }
+    }
+    /*
+      »ñÈ¡Ê÷µÄÉî¶È
+    */
+    int TreeDepth(TreeNode* pRoot)
+    {
+        if(pRoot == NULL){
+            return 0;
+        }
+        int left = TreeDepth(pRoot->lchild);
+        int right = TreeDepth(pRoot->rchild);
+        return (left > right) ? (left + 1) : (right + 1);
     }
 private:
     vector<vector<int> > result;
@@ -61,14 +196,15 @@ int main()
 {
     int sTemp[8] = {10,5,4,3,6,15,16,8};
     TreeNode *testTree = nullptr;
-    //åˆå§‹åŒ–æ’å…¥äºŒå‰æ ‘
+
+    //³õÊ¼»¯²åÈë¶ş²æÊ÷
     for(int i = 0; i < 8; i++)
     {
         int key = sTemp[i];
         TreeNode* pparent = nullptr;
         TreeNode* pnode = testTree;
  
-        while (pnode != nullptr)        //å¯»æ‰¾åˆé€‚çš„æ’å…¥ä½ç½®
+        while (pnode != nullptr)        //Ñ°ÕÒºÏÊÊµÄ²åÈëÎ»ÖÃ
         {
             pparent = pnode;
             if (key > pnode->value)
@@ -79,27 +215,34 @@ int main()
                 break;
         }
  
-        pnode = new TreeNode(key); //ä»¥å…ƒç´ çš„å€¼æ„å»ºæ–°èŠ‚ç‚¹
+        pnode = new TreeNode(key); //ÒÔÔªËØµÄÖµ¹¹½¨ĞÂ½Úµã
 
-        if (pparent == nullptr)            //å¦‚æœæ˜¯ç©ºæ ‘
+        if (pparent == nullptr)            //Èç¹ûÊÇ¿ÕÊ÷
         {
-            testTree = pnode;                  //åˆ™æ–°èŠ‚ç‚¹ä¸ºæ ¹
+            testTree = pnode;              //ÔòĞÂ½ÚµãÎª¸ù
         }
         else                            
         {
             if (key  > pparent->value)   
             {
-                pparent->rchild = pnode;//å¦åˆ™æ–°èŠ‚ç‚¹ä¸ºå…¶çˆ¶èŠ‚ç‚¹çš„å·¦å­©
+                pparent->rchild = pnode;//·ñÔòĞÂ½ÚµãÎªÆä¸¸½ÚµãµÄ×ó×ÓÊ÷
             }
             else
-                pparent->lchild = pnode; //æˆ–å³å­©
+                pparent->lchild = pnode; //»òÓÒ×ÓÊ÷
         }
     }
-    //å‰åºéå†æ˜¾ç¤ºäºŒå‰æ ‘
+
+    //Ç°Ğò±éÀúÏÔÊ¾¶ş²æÊ÷
+    cout << "Ç°Ğò±éÀú:";
     preOrder(testTree);
+    cout << endl;
     
     Solution sSo;
-    sSo.FindPath(testTree,22);
+    //sSo.FindPath(testTree,22);   //»ñÈ¡¶ş²æÊ÷Â·¾¶
+    //sSo.PrintTreebyOrder(testTree);//°´²ã´Ó×óÍùÓÒ´òÓ¡³ö¶ş²æÊ÷
+    sSo.PrintTreebyZhi(testTree);//ÆæÊı²ã´Ó×óÍùÓÒ´òÓ¡£¬Å¼Êı²ã´ÓÓÒÍù×ó´òÓ¡³ö¶ş²æÊ÷
+    sSo.printResult();
+    cout << "½ÚµãµÄ¶ÈÎª:" << sSo.TreeDepth(testTree);
     system("pause");
     return 0;
 }

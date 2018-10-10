@@ -14,7 +14,7 @@ bool Find(int target, vector<vector<int> > array)
      * 因此从左下角开始查找，当要查找数字比左下角数字大时。右移
      * 要查找数字比左下角数字小时，上移{}
     */
-   int i = n -1,j = 0;
+    int i = n -1,j = 0;
     while(i >=0 && j < m )
     {
         if(array[i][j] < target)

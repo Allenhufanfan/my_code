@@ -2,8 +2,6 @@
 #include <stdio.h>
 using namespace std;
 
-
-//Ä£°åÀà
 template <typename T>
 int compare(const T& left, const T& right)
 {
